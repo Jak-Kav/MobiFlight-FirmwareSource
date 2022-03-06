@@ -22,7 +22,9 @@
 #include "Servos.h"
 #endif
 #if MF_LCD_SUPPORT == 1
-//#include "LCDDisplay.h"
+#include "LCDDisplay.h"
+#endif
+#if MF_CUST_LCD_SUPPORT == 1
 #include "LCDDisplayCustom.h"
 #endif
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
@@ -132,7 +134,10 @@ void resetConfig()
 #endif
 
 #if MF_LCD_SUPPORT == 1
-  //LCDDisplay::Clear();
+  LCDDisplay::Clear();
+#endif
+
+#if MF_CUST_LCD_SUPPORT == 1
   LCDDisplayCustom::Clear();
 #endif
 
@@ -319,6 +324,16 @@ void readConfig()
       LCDDisplayCustom::Add();
       copy_success = readEndCommandFromEEPROM(&addreeprom);       // check EEPROM until end of name
       break;
+#endif
+
+#if MF_CUST_LCD_SUPPORT == 1
+    case kTypeLcdDisplaySPI:
+      params[0] = readUintFromEEPROM(&addreeprom);                // Get the CS Pin Number
+      params[1] = readUintFromEEPROM(&addreeprom);                // Get the CLK Pin Number
+      params[2] = readUintFromEEPROM(&addreeprom);                // Get the DATA Pin Number
+      params[3] = readUintFromEEPROM(&addreeprom);                // Get the Backlight Pin Number
+      LCDDisplayCustom::Add(params[0], params[1], params[2], params[3]); 
+      copy_success = readEndCommandFromEEPROM(&addreeprom);
 #endif
 
 #if MF_ANALOG_SUPPORT == 1

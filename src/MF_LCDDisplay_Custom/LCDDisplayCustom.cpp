@@ -8,24 +8,23 @@
 namespace LCDDisplayCustom
 {
 Open_A3XX_FCU_LCD *lcd_SPI[MAX_MFLCD_SPI];
-//MFLCDDisplay *lcd_SPI[MAX_MFLCD_SPI];
-uint8_t lcd_SPIRegistered = 0;
+uint8_t cust_LCDs_Registered = 0;
 
 
-void Add(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8)
+void Add(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8, uint8_t B_LIGHT = 10)
 {
-  if (lcd_SPIRegistered == MAX_MFLCD_SPI)
+  if (cust_LCDs_Registered == MAX_MFLCD_SPI)
     return;
 
   if (!FitInMemory(sizeof(Open_A3XX_FCU_LCD)))
 	{
 		// Error Message to Connector
-    cmdMessenger.sendCmd(kStatus, F("LCD does not fit in Memory!"));
+    cmdMessenger.sendCmd(kStatus, F("Custom LCD does not fit in Memory!"));
 		return;
 	}
-  lcd_SPI[lcd_SPIRegistered] = new Open_A3XX_FCU_LCD();
-  lcd_SPI[lcd_SPIRegistered]->attach(CS, CLK, DATA);
-  lcd_SPIRegistered++;
+  lcd_SPI[cust_LCDs_Registered] = new Open_A3XX_FCU_LCD(CS, CLK, DATA, B_LIGHT);
+  lcd_SPI[cust_LCDs_Registered]->attach(CS, CLK, DATA, B_LIGHT);
+  cust_LCDs_Registered++;
 #ifdef DEBUG2CMDMESSENGER
   cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
 #endif
@@ -33,11 +32,11 @@ void Add(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8)
 
 void Clear()
 {
-  for (int i = 0; i != lcd_SPIRegistered; i++)
+  for (int i = 0; i != cust_LCDs_Registered; i++)
   {
     lcd_SPI[i]->detach();
   }
-  lcd_SPIRegistered = 0;
+  cust_LCDs_Registered = 0;
 #ifdef DEBUG2CMDMESSENGER
   cmdMessenger.sendCmd(kStatus, F("Cleared lcdDisplays"));
 #endif
@@ -48,7 +47,7 @@ void OnSet()
   int address = cmdMessenger.readInt16Arg();
   char *output = cmdMessenger.readStringArg();
 
-  lcd_SPI[0]->handleMobiFlightRaw(output);
+  lcd_SPI[address]->handleMobiFlightRaw(output);
   setLastCommandMillis();
 }
 }   // end of namespace LCDDisplayCustom

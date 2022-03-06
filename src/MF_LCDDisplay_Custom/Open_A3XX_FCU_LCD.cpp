@@ -33,15 +33,16 @@ void Open_A3XX_FCU_LCD::begin() {
   // Initialises the buffer to all 0's.
   memset(buffer, 0, BUFFER_SIZE_MAX);
   pinMode(10, OUTPUT);
-  digitalWrite(10, HIGH);
+  digitalWrite(_B_LIGHT, HIGH);
   setStartLabels();
 }
 
-void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA)
+void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA, byte B_LIGHT)
 {
   _CS = CS;
   _CLK = CLK;
   _DATA = DATA;
+  _B_LIGHT = B_LIGHT;
   _initialised = true;
   begin();
 }
