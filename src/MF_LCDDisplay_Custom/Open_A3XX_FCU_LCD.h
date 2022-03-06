@@ -1,7 +1,7 @@
 /**
- * Open A3XX FCU Custom LCD
+ * Open A3XX FCU Custom LCD Library
  * Written by: James Kavanagh & Keith Greenwood
- * This library has been written to drive the 'OpenA3XX' FCU LCD Display.
+ * This library has been written to drive the custom 'OpenA3XX' FCU LCD Display.
  */
 
 #ifndef _Open_A3XX_FCU_LCD_h
@@ -28,50 +28,60 @@ private:
   byte _DATA;
   byte _B_LIGHT;
   bool trkActive;
-
-  // Methods
-  void handleMobiFlightCmd(char *string);
-  void displayDigit(uint8_t address, uint8_t digit);
-  void refreshLCD(uint8_t address);
-  
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
   Open_A3XX_FCU_LCD(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8, uint8_t B_LIGHT = 10) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
-
+  
+// ************************************
+// **** GLOBAL & UNIVERSAL METHODS ****
+// ************************************
+  void handleMobiFlightCmd(char *string);
+  void displayDigit(uint8_t address, uint8_t digit);
+  void refreshLCD(uint8_t address);
   void begin();
   void clearLCD();
   void attach(byte CS, byte CLK, byte DATA, byte B_LIGHT);
   void detach();
   void handleMobiFlightRaw(char *string);
 
-  //Speed and Mach functions
+// ***********************
+// **** SPEED METHODS ****
+// ***********************
   void setSpeedLabel(bool enabled);
   void setMachLabel(bool enabled);
   void setSpeedDot(int8_t state);
   void showSpeedValue(uint16_t value);
 
-  //Heading, Track and Latitude Functions
+// *************************
+// **** HEADING METHODS ****
+// *************************
   void setHeadingLabel(bool enabled);
   void setTrackLabel(bool enabled);
   void setLatitudeLabel(bool enabled);
   void setHeadingDot(int8_t state);
   void showHeadingValue(uint16_t value);
 
-  //Altitude Functions
+// **************************
+// **** ALTITUDE METHODS ****
+// **************************
   void setAltitudeLabel(bool enabled);
   void setLvlChLabel(bool enabled);
   void setAltitudeDot(int8_t state);
   void showAltitudeValue(uint32_t value);
 
-  //Vertical_Speed & FPA Functions
+// ********************************
+// **** VERTICAL SPEED METHODS ****
+// ********************************
   void setVrtSpdLabel(bool enabled);
   void setFPALabel(bool enabled);
   void setSignLabel(bool enabled);
   void showVerticalValue(int16_t value);
   void showFPAValue(int8_t value);
 
-  //Preset States
+// ********************************
+// **** PRESET & OTHER METHODS ****
+// ********************************
   void setSpeedDashes(int8_t state);
   void setHeadingDashes(int8_t state);
   void setAltitudeDashes(int8_t state);
@@ -83,5 +93,4 @@ public:
   void setSpeedMode(uint16_t value);
   void setMachMode(uint16_t value);
 };
-
 #endif //Open_A3XX_FCU_LCD_h
