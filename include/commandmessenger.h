@@ -57,6 +57,7 @@ enum
   kSetShiftRegisterPins, // 27
   kAnalogChange,         // 28
   kInputShifterChange,   // 29
+  kSetLcdDisplayCustom,  // 30 (Custom LCD)
   kDebug = 0xFF          // 255 -> for Debug print later, changes in UI are required
 };
 

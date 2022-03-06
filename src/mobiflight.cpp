@@ -98,6 +98,7 @@ void ResetBoard()
 void setup()
 {
   Serial.begin(115200);
+
   attachCommandCallbacks();
   cmdMessenger.printLfCr();
   ResetBoard();
@@ -132,7 +133,6 @@ void loop()
   // Process incoming serial data, and perform callbacks
   cmdMessenger.feedinSerialData();
   updatePowerSaving();
-
   // if config has been reset and still is not activated
   // do not perform updates
   // to prevent mangling input for config (shared buffers)
