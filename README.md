@@ -1,6 +1,7 @@
 # Jak Kav Custom Firmware   
 This is my custom firware for the MobiFlight modules.   
 It allows the user to use my custom LCD for the FCU.   
+<b>There is a pre-built HEX file hardcoded with the pins detailed below</b>
 
 It is currently set to bypass it's own Custom set up, and be setup as an exisiting LCD Module.
 It will send a string as it's LCD output, and that will be converted to a method in the custom LCD library.   
