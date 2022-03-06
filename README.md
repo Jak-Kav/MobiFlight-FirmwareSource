@@ -1,3 +1,10 @@
+# Jak Kav Custom Firmware   
+This is my custom firware for the MobiFlight modules.   
+It allows the user to use my custom LCD for the FCU.   
+
+The original readme is below:
+- - -
+
 # MobiFlight-FirmwareSource
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/MobiFlight/MobiFlight-FirmwareSource)
