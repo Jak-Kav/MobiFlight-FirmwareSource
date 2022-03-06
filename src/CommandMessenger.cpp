@@ -25,7 +25,8 @@
 #include "Servos.h"
 #endif
 #if MF_LCD_SUPPORT == 1
-#include "LCDDisplay.h"
+//#include "LCDDisplay.h"
+#include "LCDDisplayCustom.h"
 #endif
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
 #include "OutputShifter.h"
@@ -76,7 +77,9 @@ void attachCommandCallbacks()
     cmdMessenger.attach(kTrigger, OnTrigger);
 
 #if MF_LCD_SUPPORT == 1
-    cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplay::OnSet);
+  //cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplay::OnSet);
+  cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplayCustom::OnSet);
+  //cmdMessenger.attach(kSetLcdDisplayCustom, LCDDisplayCustom::OnSet); // Not yet implemented
 #endif
 
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
