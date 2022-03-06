@@ -320,8 +320,8 @@ void readConfig()
       params[0] = readUintFromEEPROM(&addreeprom);                // get the address
       params[1] = readUintFromEEPROM(&addreeprom);                // get the columns
       params[2] = readUintFromEEPROM(&addreeprom);                // get the lines
-      LCDDisplay::Add(params[0], params[1], params[2]);
-      //LCDDisplayCustom::Add();
+      //LCDDisplay::Add(params[0], params[1], params[2]);
+      LCDDisplayCustom::Add();
       copy_success = readEndCommandFromEEPROM(&addreeprom);       // check EEPROM until end of name
       break;
 #endif

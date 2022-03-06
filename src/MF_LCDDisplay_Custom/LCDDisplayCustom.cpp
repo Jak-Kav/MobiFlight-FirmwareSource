@@ -47,7 +47,7 @@ void OnSet()
   int address = cmdMessenger.readInt16Arg();
   char *output = cmdMessenger.readStringArg();
 
-  lcd_SPI[address]->handleMobiFlightRaw(output);
+  lcd_SPI[0]->handleMobiFlightRaw(output); // This needs to be set to lcd_SPI[address]->... for release.
   setLastCommandMillis();
 }
 }   // end of namespace LCDDisplayCustom
