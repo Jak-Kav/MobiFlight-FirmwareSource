@@ -26,6 +26,7 @@ private:
   byte _CS;
   byte _CLK;
   byte _DATA;
+  byte _B_LIGHT;
   bool trkActive;
 
   // Methods
@@ -37,11 +38,11 @@ private:
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
-  Open_A3XX_FCU_LCD(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
+  Open_A3XX_FCU_LCD(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8, uint8_t B_LIGHT = 10) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
 
   void begin();
   void clearLCD();
-  void attach(byte CS, byte CLK, byte DATA);
+  void attach(byte CS, byte CLK, byte DATA, byte B_LIGHT);
   void detach();
   void handleMobiFlightRaw(char *string);
 
