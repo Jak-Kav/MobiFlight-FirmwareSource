@@ -1,5 +1,5 @@
 /**
- * Open A3XX FCU LCD
+ * Open A3XX FCU Custom LCD
  * Written by: James Kavanagh & Keith Greenwood
  * This library has been written to drive the 'OpenA3XX' FCU LCD Display.
  */
@@ -32,7 +32,6 @@ private:
   // Methods
   void handleMobiFlightCmd(char *string);
   void displayDigit(uint8_t address, uint8_t digit);
-  //void setBufferBit(uint8_t address, uint8_t bit, uint8_t enabled);
   void refreshLCD(uint8_t address);
   
 public:
