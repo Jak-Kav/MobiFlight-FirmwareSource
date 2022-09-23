@@ -5,7 +5,7 @@
 #define DIGIT_THREE 2
 #define DIGIT_FOUR  3
 
-#define SET_BUFF_BITS(addr, bitMask, enabledMask) buffer[addr] = (buffer[addr] & (~(bitMask))) | (enabledMask)
+// #define SET_BUFF_BITS(addr, bitMask, enabledMask) buffer[addr] = (buffer[addr] & (~(bitMask))) | (enabledMask)
 #define SET_BUFF_BIT(addr, bit, enabled)          buffer[addr] = (buffer[addr] & (~(1 << (bit)))) | (((enabled & 1)) << (bit))
 
 void Open_A3XX_EFIS_LCD::begin()
@@ -41,17 +41,16 @@ void Open_A3XX_EFIS_LCD::detach()
     _initialised = false;
 }
 
-void Open_A3XX_EFIS_LCD::handleMobiFlightRaw(char *cmds)
-{
+void Open_A3XX_EFIS_LCD::handleMobiFlightRaw(char *cmds) {
 
-    if (!_initialised)
-        return;
-    // split string for as many as there are
-    char *cmd = strtok(cmds, ",");
-    while (cmd) {
-        handleMobiFlightCmd(cmd);
-        cmd = strtok(NULL, ",");
-    }
+  if (!_initialised)
+    return;
+  // split string for as many as there are
+  char *cmd = strtok(cmds, ",");
+  while(cmd) {
+      handleMobiFlightCmd(cmd);
+      cmd = strtok(NULL, ",");
+  }
 }
 
 void Open_A3XX_EFIS_LCD::refreshLCD(uint8_t address)
@@ -69,33 +68,21 @@ void Open_A3XX_EFIS_LCD::clearLCD()
 void Open_A3XX_EFIS_LCD::setQFE(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_THREE, 4, enabled);
-    setDot(true);
-    setQNH(false);
-    refreshLCD(DIGIT_THREE);
 }
 
 void Open_A3XX_EFIS_LCD::setQNH(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_FOUR, 4, enabled);
-    setDot(false);
-    setQFE(false);
-    refreshLCD(DIGIT_FOUR);
 }
 
 void Open_A3XX_EFIS_LCD::setDot(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_TWO, 4, enabled);
-    refreshLCD(DIGIT_TWO);
 }
 
 void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
 {
-    bool enabled;
-    if (state == 0)
-        enabled = false;
-    else
-        enabled = true;
-    if (enabled) {
+    if (state == 1) {
         displayDigit(DIGIT_ONE, 5);
         displayDigit(DIGIT_TWO, 11);
         displayDigit(DIGIT_THREE, 12);
@@ -106,6 +93,13 @@ void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
         displayDigit(DIGIT_THREE, 13);
         displayDigit(DIGIT_FOUR, 13);
     }
+    setDot(false);
+    setQFE(false);
+    setQNH(false);
+    refreshLCD(DIGIT_ONE);
+    refreshLCD(DIGIT_TWO);
+    refreshLCD(DIGIT_THREE);
+    refreshLCD(DIGIT_FOUR);
 }
 
 // Show Values
@@ -118,14 +112,33 @@ void Open_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
     value = value / 10;
     displayDigit(DIGIT_TWO, (value % 10));
     displayDigit(DIGIT_ONE, (value / 10));
+    
+    setDot(false);
+    setQFE(false);
     setQNH(true);
+    refreshLCD(DIGIT_ONE);
+    refreshLCD(DIGIT_TWO);
+    refreshLCD(DIGIT_THREE);
+    refreshLCD(DIGIT_FOUR);
 }
 
 void Open_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
 {
     if (value > 9999) value = 9999;
-    showQNHValue(value);
+    displayDigit(DIGIT_FOUR, (value % 10));
+    value = value / 10;
+    displayDigit(DIGIT_THREE, (value % 10));
+    value = value / 10;
+    displayDigit(DIGIT_TWO, (value % 10));
+    displayDigit(DIGIT_ONE, (value / 10));
+    
+    setDot(true);
     setQFE(true);
+    setQNH(false);
+    refreshLCD(DIGIT_ONE);
+    refreshLCD(DIGIT_TWO);
+    refreshLCD(DIGIT_THREE);
+    refreshLCD(DIGIT_FOUR);
 }
 
 // Global Functions
@@ -151,20 +164,18 @@ void Open_A3XX_EFIS_LCD::displayDigit(uint8_t address, uint8_t digit)
     if (digit > 13) digit = 13;
 
     buffer[address] = (buffer[address] & 16) | digitPatternEFIS[digit];
-
-    refreshLCD(address);
 }
 
-void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd) {
+void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
   // handle single command
   // does it contain = if so split into cmd & data, if not set cmd to string, and data to 0
-  char   *p = strchr(cmd, '=');
+  char *p = strchr(cmd, '=');
   int32_t data;
   if (p) {
     // Data - Handle data & method
     // cmdName is left side - data is right side
-    *p = '\0';      // Convert '=' to end of string
-    p++;            // Move 'p' to start of data string
+    *p = '\0'; // Convert '=' to end of string
+    p++; // Move 'p' to start of data string
     data = atoi(p); // Convert the string value of the data to Integer (assuming the data passed is always an Integer).
   } else {
     // No data - handle method only
