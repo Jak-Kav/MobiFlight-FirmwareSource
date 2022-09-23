@@ -7,9 +7,6 @@
 #ifndef MF_LCD_SUPPORT
 #define MF_LCD_SUPPORT 1
 #endif
-#ifndef MF_CUST_LCD_SUPPORT
-#define MF_CUST_LCD_SUPPORT 1
-#endif
 #ifndef MF_STEPPER_SUPPORT
 #define MF_STEPPER_SUPPORT 1
 #endif
@@ -45,7 +42,7 @@
 
 #define MOBIFLIGHT_TYPE         "MobiFlight Mega"
 #define MOBIFLIGHT_SERIAL       "1234567890"
-#define MOBIFLIGHT_NAME         "MobiFlight Mega Custom"
+#define MOBIFLIGHT_NAME         "MobiFlight Mega"
 #define EEPROM_SIZE             4096    // EEPROMSizeMega
 #define MEMLEN_CONFIG           1496    // max. size for config which wil be stored in EEPROM
 #define MEMLEN_CONFIG_BUFFER    1000    // max. size for configBuffer, contains only names from inputs
