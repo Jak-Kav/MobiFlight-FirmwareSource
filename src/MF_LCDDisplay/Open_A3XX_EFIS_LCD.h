@@ -49,12 +49,12 @@ public:
   // Set Dot Function
   void setDot(bool enabled);
   // Show Std function
-  void showStd(int16_t state);
+  void showStd(uint16_t state);
 
   // Show QFE function
-  void showQFEValue(int16_t value);
+  void showQFEValue(uint16_t value);
   // Show QNH function
-  void showQNHValue(int16_t value);
+  void showQNHValue(uint16_t value);
 };
 
 #endif //Open_A3XX_EFIS_LCD_h
