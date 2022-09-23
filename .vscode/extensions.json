@@ -4,11 +4,8 @@
     "recommendations": [
         "platformio.platformio-ide",
         "vsls-contrib.codetour"
-<<<<<<< HEAD
     ],
     "unwantedRecommendations": [
         "ms-vscode.cpptools-extension-pack"
-=======
->>>>>>> d84ddb4 (Some slight refactoring)
     ]
 }

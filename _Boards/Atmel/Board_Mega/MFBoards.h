@@ -13,9 +13,6 @@
 #ifndef MF_LCD_SUPPORT
 #define MF_LCD_SUPPORT 1
 #endif
-#ifndef MF_CUST_LCD_SUPPORT
-#define MF_CUST_LCD_SUPPORT 1
-#endif
 #ifndef MF_STEPPER_SUPPORT
 #define MF_STEPPER_SUPPORT 1
 #endif
