@@ -1,4 +1,5 @@
 #include "Open_A3XX_EFIS_LCD.h"
+#include "commandmessenger.h"
 
 #define DIGIT_ONE   0
 #define DIGIT_TWO   1
@@ -68,16 +69,19 @@ void Open_A3XX_EFIS_LCD::clearLCD()
 void Open_A3XX_EFIS_LCD::setQFE(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_THREE, 4, enabled);
+    refreshLCD(DIGIT_THREE);
 }
 
 void Open_A3XX_EFIS_LCD::setQNH(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_FOUR, 4, enabled);
+    refreshLCD(DIGIT_FOUR);
 }
 
 void Open_A3XX_EFIS_LCD::setDot(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_TWO, 4, enabled);
+    refreshLCD(DIGIT_TWO);
 }
 
 void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
@@ -96,10 +100,10 @@ void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
     setDot(false);
     setQFE(false);
     setQNH(false);
-    refreshLCD(DIGIT_ONE);
-    refreshLCD(DIGIT_TWO);
-    refreshLCD(DIGIT_THREE);
-    refreshLCD(DIGIT_FOUR);
+    //refreshLCD(DIGIT_ONE);
+    //refreshLCD(DIGIT_TWO);
+    //refreshLCD(DIGIT_THREE);
+    //refreshLCD(DIGIT_FOUR);
 }
 
 // Show Values
@@ -116,10 +120,10 @@ void Open_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
     setDot(false);
     setQFE(false);
     setQNH(true);
-    refreshLCD(DIGIT_ONE);
-    refreshLCD(DIGIT_TWO);
-    refreshLCD(DIGIT_THREE);
-    refreshLCD(DIGIT_FOUR);
+    //refreshLCD(DIGIT_ONE);
+    //refreshLCD(DIGIT_TWO);
+    //refreshLCD(DIGIT_THREE);
+    //refreshLCD(DIGIT_FOUR);
 }
 
 void Open_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
@@ -135,10 +139,10 @@ void Open_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
     setDot(true);
     setQFE(true);
     setQNH(false);
-    refreshLCD(DIGIT_ONE);
-    refreshLCD(DIGIT_TWO);
-    refreshLCD(DIGIT_THREE);
-    refreshLCD(DIGIT_FOUR);
+    //refreshLCD(DIGIT_ONE);
+    //refreshLCD(DIGIT_TWO);
+    //refreshLCD(DIGIT_THREE);
+    //refreshLCD(DIGIT_FOUR);
 }
 
 // Global Functions
@@ -164,6 +168,8 @@ void Open_A3XX_EFIS_LCD::displayDigit(uint8_t address, uint8_t digit)
     if (digit > 13) digit = 13;
 
     buffer[address] = (buffer[address] & 16) | digitPatternEFIS[digit];
+
+    refreshLCD(address);
 }
 
 void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
@@ -181,7 +187,7 @@ void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
     // No data - handle method only
     data = 0;
   }
-  
+    
        if (strcmp(cmd, "setQNH") == 0) showQNHValue((uint16_t)data);
   else if (strcmp(cmd, "setQFE") == 0) showQFEValue((uint16_t)data);
   else if (strcmp(cmd, "setStd") == 0) showStd((uint16_t)data);

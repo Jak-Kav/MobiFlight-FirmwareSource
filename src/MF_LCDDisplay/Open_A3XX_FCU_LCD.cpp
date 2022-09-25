@@ -1,4 +1,5 @@
 #include "Open_A3XX_FCU_LCD.h"
+#include "commandmessenger.h"
 
 #define SPD_HUN   0
 #define SPD_TEN   1
