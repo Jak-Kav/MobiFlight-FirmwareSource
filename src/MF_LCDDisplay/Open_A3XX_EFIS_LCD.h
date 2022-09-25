@@ -35,7 +35,7 @@ private:
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
-  Open_A3XX_EFIS_LCD(uint8_t CS = 2, uint8_t CLK = 3, uint8_t DATA = 4) : ht_efis(CS, CLK, DATA) { };
+  Open_A3XX_EFIS_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht_efis(CS, CLK, DATA) { };
 
   void begin();
   void clearLCD();

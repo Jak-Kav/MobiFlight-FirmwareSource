@@ -13,17 +13,17 @@ namespace LCDDisplayCustom
     // MFLCDDisplay *lcd_SPI[MAX_MFLCD_SPI];
     uint8_t lcd_SPIRegistered = 0;
 
-    void Add(uint8_t CS)
+    void Add(uint8_t TYPE)
     {
-        if (CS == 1) {
-            AddFCU();
+        if (TYPE == 1) {
+            AddFCU(); // If no parameters, default values from .h file will be used
         }
-        if (CS == 2) {
-            AddEFIS();
+        if (TYPE == 2) {
+            AddEFIS(); // If no parameters, default values from .h file will be used
         }
     }
 
-    void AddFCU(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8)
+    void AddFCU(uint8_t CS, uint8_t CLK, uint8_t DATA)
     {
         if (lcd_SPIRegistered == MAX_MFLCD_SPI)
             return;
@@ -33,14 +33,14 @@ namespace LCDDisplayCustom
             cmdMessenger.sendCmd(kStatus, F("LCD does not fit in Memory!"));
             return;
         }
-        lcd_SPI[lcd_SPIRegistered] = new Open_A3XX_FCU_LCD();
-        lcd_SPI[lcd_SPIRegistered]->attach(CS, CLK, DATA);
+        lcd_SPI[lcd_SPIRegistered] = new Open_A3XX_FCU_LCD(CS, CLK, DATA);      // Pass the values to the constructor for the HT1621 chip to be setup
+        lcd_SPI[lcd_SPIRegistered]->attach(CS, CLK, DATA);                      // Pass the values to the instance to set up the global variables and initialise the LCD
         lcd_SPIRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
 #endif
     }
-    void AddEFIS(uint8_t CS = 2, uint8_t CLK = 3, uint8_t DATA = 4)
+    void AddEFIS(uint8_t CS, uint8_t CLK, uint8_t DATA)
     {
         if (lcd_SPIRegistered == MAX_MFLCD_SPI)
             return;
@@ -50,8 +50,8 @@ namespace LCDDisplayCustom
             cmdMessenger.sendCmd(kStatus, F("LCD does not fit in Memory!"));
             return;
         }
-        lcd_SPI2[lcd_SPIRegistered] = new Open_A3XX_EFIS_LCD();
-        lcd_SPI2[lcd_SPIRegistered]->attach(CS, CLK, DATA);
+        lcd_SPI2[lcd_SPIRegistered] = new Open_A3XX_EFIS_LCD(CS, CLK, DATA);    // Pass the values to the constructor for the HT1621 chip to be setup
+        lcd_SPI2[lcd_SPIRegistered]->attach(CS, CLK, DATA);                     // Pass the values to the instance to set up the global variables and initialise the LCD
         lcd_SPIRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
@@ -72,8 +72,10 @@ namespace LCDDisplayCustom
 
     void OnSet()
     {
-        int   address = cmdMessenger.readInt16Arg();
-        char *output  = cmdMessenger.readStringArg();
+        int   address = cmdMessenger.readInt16Arg(); // Not needed for the current implementation of the LCD
+        (void) (address);                            // But we have to read it, so here we declare it void.
+
+        char *output  = cmdMessenger.readStringArg(); // Read the command from MobiFlight
 
         lcd_SPI[0]->handleMobiFlightRaw(output);
         lcd_SPI2[1]->handleMobiFlightRaw(output);
