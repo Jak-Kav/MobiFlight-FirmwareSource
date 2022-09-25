@@ -37,7 +37,7 @@ private:
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
-  Open_A3XX_FCU_LCD(uint8_t CS = 13, uint8_t CLK = 12, uint8_t DATA = 8) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
+  Open_A3XX_FCU_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
 
   void begin();
   void clearLCD();

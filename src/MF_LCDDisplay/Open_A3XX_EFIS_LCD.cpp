@@ -22,8 +22,8 @@ void Open_A3XX_EFIS_LCD::begin()
     // Initialises the buffer to all 0's.
     memset(buffer, 0, BUFFER_SIZE_MAX);
     // Turn backlight on
-    pinMode(7, OUTPUT);
-    digitalWrite(7, HIGH);
+    pinMode(37, OUTPUT);
+    digitalWrite(37, HIGH);
 }
 
 void Open_A3XX_EFIS_LCD::attach(byte CS, byte CLK, byte DATA)
