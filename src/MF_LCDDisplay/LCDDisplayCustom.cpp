@@ -76,8 +76,8 @@ namespace LCDDisplayCustom
         (void) (address);                               // But we have to read it, so here we declare it void.
 
         char *output  = cmdMessenger.readStringArg();   // Read the command from MobiFlight
-        char output2[strlen(output)+1];                 // Create a new peice of memory bigger than the size of `output`
-        strcpy(output2, output);                        // Create a unique copy of `output` in a new peice of memory
+        char output2[32]={0};                           // Create a new peice of memory bigger than the size of `output`
+        strncpy(output2, output, 31);                   // Create a unique copy of `output` in a new peice of memory
 
         lcd_SPI[0]->handleMobiFlightRaw(output);        // Pass the command to the FCU
         lcd_SPI2[1]->handleMobiFlightRaw(output2);      // Pass the command to the EFIS
