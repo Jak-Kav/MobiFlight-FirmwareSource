@@ -1,6 +1,6 @@
 #include "Open_A3XX_FCU_LCD.h"
+#include "commandmessenger.h"
 
-// Define the rows (Each row has 8 bits)
 #define SPD_HUN   0
 #define SPD_TEN   1
 #define SPD_UNIT  2
@@ -17,18 +17,11 @@
 #define VRT_TEN   13
 #define VRT_UNIT  14
 #define SPECIALS  15
-// Define the buffer bits
+
 #define SET_BUFF_BITS(addr, bitMask, enabledMask)   buffer[addr] = (buffer[addr] & (~(bitMask))) | (enabledMask)
 #define SET_BUFF_BIT(addr, bit, enabled)            buffer[addr] = (buffer[addr] & (~(1<<(bit)))) | (((enabled&1))<<(bit))
 
-/**
- * Method to begin the LCD.
- * Sets up the driver chip, clears the LCD, initialises the buffer to all '0'.
- * Sets up the backlight and turns it on (This will need to be changed for release, to ensure this only happens if a backlight is setup).
- * Initialises the labels that need to be always on.
- */
 void Open_A3XX_FCU_LCD::begin() {
-  // Set up the driver chip
   ht.begin();
   ht.sendCommand(HT1621::RC256K);
   ht.sendCommand(HT1621::BIAS_THIRD_4_COM);
@@ -36,34 +29,23 @@ void Open_A3XX_FCU_LCD::begin() {
   ht.sendCommand(HT1621::LCD_ON);
   // This clears the LCD
   for (uint8_t i = 0; i < ht.MAX_ADDR; i++)
-      ht.write(i, 0);      
+      ht.write(i, 0);
+      
   // Initialises the buffer to all 0's.
   memset(buffer, 0, BUFFER_SIZE_MAX);
-  pinMode(_B_LIGHT, OUTPUT);
-  digitalWrite(_B_LIGHT, HIGH);
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH);
   setStartLabels();
 }
 
-/**
- * Function in the setup to declare the pins, set it to initialised and trigger to 'begin' method.
- * @variable CS       The declared 'CS' pin
- * @variable CLK      The declared 'CLK' pin
- * @variable DATA     The declared 'DATA' pin
- * @variable B_LIGHT  The declared 'B_LIGHT' pin
- */
-void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA, byte B_LIGHT)
+void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA)
 {
   _CS = CS;
   _CLK = CLK;
   _DATA = DATA;
-  _B_LIGHT = B_LIGHT;
   _initialised = true;
   begin();
 }
-
-/**
- * Method to detach the device.
- */
 void Open_A3XX_FCU_LCD::detach()
 {
   if (!_initialised)
@@ -71,34 +53,39 @@ void Open_A3XX_FCU_LCD::detach()
   _initialised = false;
 }
 
-/**
- * Method to refresh the LCD at request. Normally after a change has been made.
- */
+void Open_A3XX_FCU_LCD::handleMobiFlightRaw(char *cmds) {
+
+  if (!_initialised)
+    return;
+  // split string for as many as there are
+  char *cmd = strtok(cmds, ",");
+  while(cmd) {
+      handleMobiFlightCmd(cmd);
+      cmd = strtok(NULL, ",");
+  }
+}
+
 void Open_A3XX_FCU_LCD::refreshLCD(uint8_t address) {
   ht.write(address*2, buffer[address], 8);
 }
-
-/**
- * Method to clear the LCD and set it to black.
- */
 void Open_A3XX_FCU_LCD::clearLCD() {
   for (uint8_t i = 0; i < ht.MAX_ADDR; i++)
       ht.write(i, 0);
   memset(buffer, 0, BUFFER_SIZE_MAX);
 }
 
-// ***********************
-// **** SPEED METHODS ****
-// ***********************
+//Speed
 void Open_A3XX_FCU_LCD::setSpeedLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 7, enabled);
   refreshLCD(SPECIALS);
 }
+
 void Open_A3XX_FCU_LCD::setMachLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 6, enabled);
   SET_BUFF_BIT(SPD_TEN, 0, enabled); // Decimal-point
   refreshLCD(SPECIALS);
 }
+
 void Open_A3XX_FCU_LCD::setSpeedDot(int8_t state) {
   bool enabled;
   if (state == 0) enabled = false;
@@ -106,6 +93,7 @@ void Open_A3XX_FCU_LCD::setSpeedDot(int8_t state) {
   SET_BUFF_BIT(HDG_HUN, 0, enabled);
   refreshLCD(HDG_HUN);
 }
+
 void Open_A3XX_FCU_LCD::showSpeedValue(uint16_t value) {
   if (value > 999) value = 999;
   displayDigit(SPD_UNIT, (value % 10));
@@ -114,9 +102,7 @@ void Open_A3XX_FCU_LCD::showSpeedValue(uint16_t value) {
   displayDigit(SPD_HUN, (value / 10)); 
 }
 
-// *************************
-// **** HEADING METHODS ****
-// *************************
+//Heading
 void Open_A3XX_FCU_LCD::setHeadingLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 5, enabled);
   SET_BUFF_BIT(ALT_TEN, 0, enabled);
@@ -140,6 +126,7 @@ void Open_A3XX_FCU_LCD::setHeadingDot(int8_t state) {
   SET_BUFF_BIT(HDG_UNIT, 0, enabled);
   refreshLCD(HDG_UNIT);
 }
+
 void Open_A3XX_FCU_LCD::showHeadingValue(uint16_t value) {
   if (value > 999) value = 999;
   displayDigit(HDG_UNIT, (value % 10));
@@ -148,9 +135,7 @@ void Open_A3XX_FCU_LCD::showHeadingValue(uint16_t value) {
   displayDigit(HDG_HUN, (value / 10));
 }
 
-// **************************
-// **** ALTITUDE METHODS ****
-// **************************
+// Altitude
 void Open_A3XX_FCU_LCD::setAltitudeLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 0, enabled);
   refreshLCD(SPECIALS);
@@ -178,9 +163,7 @@ void Open_A3XX_FCU_LCD::showAltitudeValue(uint32_t value) {
   displayDigit(ALT_TTH, (value / 10));
 }
 
-// ********************************
-// **** VERTICAL SPEED METHODS ****
-// ********************************
+//Vertical
 void Open_A3XX_FCU_LCD::setVrtSpdLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 2, enabled);
   SET_BUFF_BIT(ALT_THO, 0, enabled);
@@ -212,7 +195,8 @@ void Open_A3XX_FCU_LCD::showVerticalValue(int16_t value) {
     SET_BUFF_BIT(VRT_TEN, 0, vertSignEnabled);
     SET_BUFF_BIT(VRT_UNIT, 0, vertSignEnabled);
     SET_BUFF_BIT(VRT_HUN, 0, false);
-  }  
+  }
+  
   displayDigit(VRT_UNIT, 12);
   value = value / 10;
   displayDigit(VRT_TEN, 12);
@@ -233,6 +217,7 @@ void Open_A3XX_FCU_LCD::showFPAValue(int8_t value) {
     SET_BUFF_BIT(VRT_UNIT, 0, vertSignEnabled);
     SET_BUFF_BIT(VRT_HUN, 0, true);
   }
+
   displayDigit(VRT_HUN, (value % 10));
   displayDigit(VRT_THO, (value / 10));
   SET_BUFF_BITS(VRT_TEN, 0b11111110, 0);
@@ -241,9 +226,7 @@ void Open_A3XX_FCU_LCD::showFPAValue(int8_t value) {
   refreshLCD(VRT_UNIT);
 }
 
-// ********************************
-// **** PRESET & OTHER METHODS ****
-// ********************************
+// Preset States
 void Open_A3XX_FCU_LCD::setSpeedDashes(int8_t state) {
   uint8_t val;
   bool enabled;
@@ -260,6 +243,7 @@ void Open_A3XX_FCU_LCD::setSpeedDashes(int8_t state) {
   SET_BUFF_BIT(SPD_TEN, 0, false); // Clear Mach Decimal-point
   refreshLCD(SPECIALS);    
 }
+
 void Open_A3XX_FCU_LCD::setHeadingDashes(int8_t state) {
   uint8_t val;
   bool enabled;
@@ -342,14 +326,8 @@ void Open_A3XX_FCU_LCD::setMachMode(uint16_t value) {
   showSpeedValue(value);
 }
 
-// ************************************
-// **** GLOBAL & UNIVERSAL METHODS ****
-// ************************************
-
-/**
- * Set up the binary patterns for each character required on the '7-Segment' sections
- */
-uint8_t digitPattern[13] = {
+//Global Functions
+uint8_t digitPatternFCU[13] = {
   0b11111010, // 0
   0b01100000, // 1
   0b10111100, // 2
@@ -364,55 +342,31 @@ uint8_t digitPattern[13] = {
   0b00000000, // blank
   0b11001100, // small 0 (For V/S)
 };
-
-/**
- * A method to display a digit/character
- * @variable address  The address of the '7-segment' to display the digit on
- * @variable digit    The digit to be displayed
- */
 void Open_A3XX_FCU_LCD::displayDigit(uint8_t address, uint8_t digit) {
-  // This ensures that anything over 12 is turned to 'blank', and as it's unsigned anything less than 0 will become 255, and therefore, 'blank'.
+  // This ensures that anything over 12 is turned to 'blank', and as it's unsigned, anything less than 0 will become 255, and therefore, 'blank'.
   if (digit > 12) digit = 11;
-  buffer[address] = (buffer[address] & 1) | digitPattern[digit];  
+
+  buffer[address] = (buffer[address] & 1) | digitPatternFCU[digit];
+  
   refreshLCD(address);
 }
 
-/**
- * A function to handle raw data from Mobiflight.
- * @variable *cmds The raw string sent from MobiFlight
- */
-void Open_A3XX_FCU_LCD::handleMobiFlightRaw(char *cmds) {
-
-  if (!_initialised)
-    return;
-  // Split string into individual commands
-  char *cmd = strtok(cmds, ",");
-  while(cmd) {
-      handleMobiFlightCmd(cmd);
-      cmd = strtok(NULL, ",");
-  }
-}
-
-/**
- * A function to handle a single command passed from MobiFlight.
- * Commands should be passed to this method via the 'handleMobiFlightRaw' method.
- * @variable *cmd The command to be processed
- */
 void Open_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
-  // Split the whole command into 'cmd' & 'data'. If no data, set data to '0'.
-  // Example: "setSpd=180" -> 'cmd'   = "setSpd" 
-  //                          'data'  = "180"
+  // handle single command
+  // does it contain = if so split into cmd & data, if not set cmd to string, and data to 0
   char *p = strchr(cmd, '=');
   int32_t data;
   if (p) {
-    *p = '\0';      // Convert '=' to end of string
-    p++;            // Move 'p' to start of data string
+    // Data - Handle data & method
+    // cmdName is left side - data is right side
+    *p = '\0'; // Convert '=' to end of string
+    p++; // Move 'p' to start of data string
     data = atoi(p); // Convert the string value of the data to Integer (assuming the data passed is always an Integer).
   } else {
-    // No data - set to '0'
+    // No data - handle method only
     data = 0;
   }
-  // Send the data to the appropriate function
+  
        if (strcmp(cmd, "setSpd")==0) setSpeedMode((uint16_t)data);
   else if (strcmp(cmd, "setMach")==0) setMachMode((uint16_t)data);     
   else if (strcmp(cmd, "setHdg")==0) showHeadingValue((uint16_t)data);
@@ -426,8 +380,9 @@ void Open_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
   else if (strcmp(cmd, "setSpdDot")==0) setSpeedDot((int8_t)data);
   else if (strcmp(cmd, "setHdgDot")==0) setHeadingDot((int8_t)data);
   else if (strcmp(cmd, "setAltDot")==0) setAltitudeDot((int8_t)data);
-  else if (strcmp(cmd, "toggleTrkHdg")==0) toggleTrkHdgMode((int8_t)data); 
-}
+  else if (strcmp(cmd, "toggleTrkHdg")==0) toggleTrkHdgMode((int8_t)data);
 
-// FBW LVars Site
-// https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#speed
+  // FBW LVars Site
+  // https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#speed
+  
+}
