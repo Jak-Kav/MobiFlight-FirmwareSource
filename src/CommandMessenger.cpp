@@ -31,6 +31,9 @@
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
 #include "OutputShifter.h"
 #endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+#include "DigInMux.h"
+#endif
 
 CmdMessenger  cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;
@@ -109,6 +112,12 @@ void OnTrigger()
     Button::OnTrigger();
 #if MF_INPUT_SHIFTER_SUPPORT == 1
     InputShifter::OnTrigger();
+#endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+    DigInMux::OnTrigger();
+#endif
+#if MF_ANALOG_SUPPORT == 1
+    Analog::OnTrigger();
 #endif
 }
 
