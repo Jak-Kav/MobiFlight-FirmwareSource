@@ -361,7 +361,7 @@ void Open_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
     // cmdName is left side - data is right side
     *p = '\0'; // Convert '=' to end of string
     p++; // Move 'p' to start of data string
-    data = atoi(p); // Convert the string value of the data to Integer (assuming the data passed is always an Integer).
+    data = strtoul(p, &p, 10); // Convert the string value of the data to Integer (assuming the data passed is always an Integer).
   } else {
     // No data - handle method only
     data = 0;
