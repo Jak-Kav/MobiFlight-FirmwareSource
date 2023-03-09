@@ -4,3 +4,5 @@
 .vscode/launch.json
 .vscode/ipch
 .vscode/arduino.json
+.DS_Store
+.gitignore
