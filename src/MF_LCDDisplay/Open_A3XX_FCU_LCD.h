@@ -1,7 +1,7 @@
 /**
  * Open A3XX FCU LCD
  * Written by: James Kavanagh & Keith Greenwood
- * This library has been written to drive the 'OpenA3XX' FCU LCD Display.
+ * This library has been written to drive the 'Kav Simulations' FCU LCD Display.
  */
 
 #ifndef _Open_A3XX_FCU_LCD_h
