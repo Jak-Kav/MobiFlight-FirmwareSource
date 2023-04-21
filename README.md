@@ -9,7 +9,6 @@ To use, please connect to the following arduino mega pins:
 CS = 12   
 CLK = 11   
 DATA = 8   
-Backlight = 10   
 The original readme is below:
 - - -
 
