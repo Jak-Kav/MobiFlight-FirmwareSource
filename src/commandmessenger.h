@@ -44,7 +44,7 @@ enum {
     kInputShifterChange,   // 29
     kDigInMuxChange,       // 30
     kSetStepperSpeedAccel, // 31
-    kSetLcdDisplayCustom   // 32 (Custom LCD, NOT YET USED)
+    kSetLcdDisplayCustom,  // 32 (Custom LCD, NOT YET USED)
     kDebug = 0xFF          // 255
 };
 
