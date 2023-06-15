@@ -1,15 +1,13 @@
-#include "Open_A3XX_EFIS_LCD.h"
+#include "KAV_A3XX_EFIS_LCD.h"
 #include "commandmessenger.h"
 
 #define DIGIT_ONE   0
 #define DIGIT_TWO   1
 #define DIGIT_THREE 2
 #define DIGIT_FOUR  3
-
-// #define SET_BUFF_BITS(addr, bitMask, enabledMask) buffer[addr] = (buffer[addr] & (~(bitMask))) | (enabledMask)
 #define SET_BUFF_BIT(addr, bit, enabled)          buffer[addr] = (buffer[addr] & (~(1 << (bit)))) | (((enabled & 1)) << (bit))
 
-void Open_A3XX_EFIS_LCD::begin()
+void KAV_A3XX_EFIS_LCD::begin()
 {
     ht_efis.begin();
     ht_efis.sendCommand(HT1621::RC256K);
@@ -22,12 +20,9 @@ void Open_A3XX_EFIS_LCD::begin()
 
     // Initialises the buffer to all 0's.
     memset(buffer, 0, BUFFER_SIZE_MAX);
-    // Turn backlight on
-    pinMode(37, OUTPUT);
-    digitalWrite(37, HIGH);
 }
 
-void Open_A3XX_EFIS_LCD::attach(byte CS, byte CLK, byte DATA)
+void KAV_A3XX_EFIS_LCD::attach(byte CS, byte CLK, byte DATA)
 {
     _CS          = CS;
     _CLK         = CLK;
@@ -35,14 +30,14 @@ void Open_A3XX_EFIS_LCD::attach(byte CS, byte CLK, byte DATA)
     _initialised = true;
     begin();
 }
-void Open_A3XX_EFIS_LCD::detach()
+void KAV_A3XX_EFIS_LCD::detach()
 {
     if (!_initialised)
         return;
     _initialised = false;
 }
 
-void Open_A3XX_EFIS_LCD::handleMobiFlightRaw(char *cmds) {
+void KAV_A3XX_EFIS_LCD::handleMobiFlightRaw(char *cmds) {
 
   if (!_initialised)
     return;
@@ -54,11 +49,11 @@ void Open_A3XX_EFIS_LCD::handleMobiFlightRaw(char *cmds) {
   }
 }
 
-void Open_A3XX_EFIS_LCD::refreshLCD(uint8_t address)
+void KAV_A3XX_EFIS_LCD::refreshLCD(uint8_t address)
 {
     ht_efis.write(address * 2, buffer[address], 8);
 }
-void Open_A3XX_EFIS_LCD::clearLCD()
+void KAV_A3XX_EFIS_LCD::clearLCD()
 {
     for (uint8_t i = 0; i < ht_efis.MAX_ADDR; i++)
         ht_efis.write(i, 0);
@@ -66,25 +61,25 @@ void Open_A3XX_EFIS_LCD::clearLCD()
 }
 
 // QFE, QNH and Dot Functions
-void Open_A3XX_EFIS_LCD::setQFE(bool enabled)
+void KAV_A3XX_EFIS_LCD::setQFE(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_THREE, 4, enabled);
     refreshLCD(DIGIT_THREE);
 }
 
-void Open_A3XX_EFIS_LCD::setQNH(bool enabled)
+void KAV_A3XX_EFIS_LCD::setQNH(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_FOUR, 4, enabled);
     refreshLCD(DIGIT_FOUR);
 }
 
-void Open_A3XX_EFIS_LCD::setDot(bool enabled)
+void KAV_A3XX_EFIS_LCD::setDot(bool enabled)
 {
     SET_BUFF_BIT(DIGIT_TWO, 4, enabled);
     refreshLCD(DIGIT_TWO);
 }
 
-void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
+void KAV_A3XX_EFIS_LCD::showStd(uint16_t state)
 {
     if (state == 1) {
         displayDigit(DIGIT_ONE, 5);
@@ -100,14 +95,10 @@ void Open_A3XX_EFIS_LCD::showStd(uint16_t state)
     setDot(false);
     setQFE(false);
     setQNH(false);
-    //refreshLCD(DIGIT_ONE);
-    //refreshLCD(DIGIT_TWO);
-    //refreshLCD(DIGIT_THREE);
-    //refreshLCD(DIGIT_FOUR);
 }
 
 // Show Values
-void Open_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
+void KAV_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
 {
     if (value > 9999) value = 9999;
     displayDigit(DIGIT_FOUR, (value % 10));
@@ -120,13 +111,9 @@ void Open_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
     setDot(false);
     setQFE(false);
     setQNH(true);
-    //refreshLCD(DIGIT_ONE);
-    //refreshLCD(DIGIT_TWO);
-    //refreshLCD(DIGIT_THREE);
-    //refreshLCD(DIGIT_FOUR);
 }
 
-void Open_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
+void KAV_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
 {
     if (value > 9999) value = 9999;
     displayDigit(DIGIT_FOUR, (value % 10));
@@ -139,10 +126,6 @@ void Open_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
     setDot(true);
     setQFE(true);
     setQNH(false);
-    //refreshLCD(DIGIT_ONE);
-    //refreshLCD(DIGIT_TWO);
-    //refreshLCD(DIGIT_THREE);
-    //refreshLCD(DIGIT_FOUR);
 }
 
 // Global Functions
@@ -162,7 +145,7 @@ uint8_t digitPatternEFIS[14] = {
     0b01100111, // d
     0b00000000, // blank
 };
-void Open_A3XX_EFIS_LCD::displayDigit(uint8_t address, uint8_t digit)
+void KAV_A3XX_EFIS_LCD::displayDigit(uint8_t address, uint8_t digit)
 {
     // This ensures that anything over 12 is turned to 'blank', and as it's unsigned, anything less than 0 will become 255, and therefore, 'blank'.
     if (digit > 13) digit = 13;
@@ -172,7 +155,7 @@ void Open_A3XX_EFIS_LCD::displayDigit(uint8_t address, uint8_t digit)
     refreshLCD(address);
 }
 
-void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
+void KAV_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
   // handle single command
   // does it contain = if so split into cmd & data, if not set cmd to string, and data to 0
   char *p = strchr(cmd, '=');
@@ -191,8 +174,4 @@ void Open_A3XX_EFIS_LCD::handleMobiFlightCmd(char *cmd)  {
        if (strcmp(cmd, "setQNH") == 0) showQNHValue((uint16_t)data);
   else if (strcmp(cmd, "setQFE") == 0) showQFEValue((uint16_t)data);
   else if (strcmp(cmd, "setStd") == 0) showStd((uint16_t)data);
-
-  // FBW LVars Site
-  // https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#speed
-
 }

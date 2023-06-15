@@ -1,11 +1,11 @@
 /**
- * Open A3XX FCU LCD
+ * KAV A3XX FCU LCD
  * Written by: James Kavanagh & Keith Greenwood
- * This library has been written to drive the 'OpenA3XX' FCU LCD Display.
+ * This library has been written to drive the 'Kav Simulations' FCU LCD Display.
  */
 
-#ifndef _Open_A3XX_FCU_LCD_h
-#define _Open_A3XX_FCU_LCD_h
+#ifndef _KAV_A3XX_FCU_LCD_h
+#define _KAV_A3XX_FCU_LCD_h
 
 #define BUFFER_SIZE_MAX 16
 
@@ -16,7 +16,7 @@
 #endif
 #include "HT1621.h"
 
-class Open_A3XX_FCU_LCD {
+class KAV_A3XX_FCU_LCD {
 private:
   // Fields
   HT1621 ht;
@@ -31,13 +31,12 @@ private:
   // Methods
   void handleMobiFlightCmd(char *string);
   void displayDigit(uint8_t address, uint8_t digit);
-  //void setBufferBit(uint8_t address, uint8_t bit, uint8_t enabled);
   void refreshLCD(uint8_t address);
   
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
-  Open_A3XX_FCU_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
+  KAV_A3XX_FCU_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht(CS, CLK, DATA), vertSignEnabled(true) { };
 
   void begin();
   void clearLCD();
@@ -84,4 +83,4 @@ public:
   void setMachMode(uint16_t value);
 };
 
-#endif //Open_A3XX_FCU_LCD_h
+#endif //KAV_A3XX_FCU_LCD_h

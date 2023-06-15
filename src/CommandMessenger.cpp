@@ -77,7 +77,6 @@ void attachCommandCallbacks()
     cmdMessenger.attach(kTrigger, OnTrigger);
 
 #if MF_LCD_SUPPORT == 1
-  //cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplay::OnSet);
   cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplayCustom::OnSet);
   //cmdMessenger.attach(kSetLcdDisplayCustom, LCDDisplayCustom::OnSet); // Not yet implemented
 #endif

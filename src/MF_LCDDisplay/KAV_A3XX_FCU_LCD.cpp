@@ -1,4 +1,4 @@
-#include "Open_A3XX_FCU_LCD.h"
+#include "KAV_A3XX_FCU_LCD.h"
 #include "commandmessenger.h"
 
 #define SPD_HUN   0
@@ -21,7 +21,7 @@
 #define SET_BUFF_BITS(addr, bitMask, enabledMask)   buffer[addr] = (buffer[addr] & (~(bitMask))) | (enabledMask)
 #define SET_BUFF_BIT(addr, bit, enabled)            buffer[addr] = (buffer[addr] & (~(1<<(bit)))) | (((enabled&1))<<(bit))
 
-void Open_A3XX_FCU_LCD::begin() {
+void KAV_A3XX_FCU_LCD::begin() {
   ht.begin();
   ht.sendCommand(HT1621::RC256K);
   ht.sendCommand(HT1621::BIAS_THIRD_4_COM);
@@ -38,7 +38,7 @@ void Open_A3XX_FCU_LCD::begin() {
   setStartLabels();
 }
 
-void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA)
+void KAV_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA)
 {
   _CS = CS;
   _CLK = CLK;
@@ -46,14 +46,14 @@ void Open_A3XX_FCU_LCD::attach(byte CS, byte CLK, byte DATA)
   _initialised = true;
   begin();
 }
-void Open_A3XX_FCU_LCD::detach()
+void KAV_A3XX_FCU_LCD::detach()
 {
   if (!_initialised)
     return;
   _initialised = false;
 }
 
-void Open_A3XX_FCU_LCD::handleMobiFlightRaw(char *cmds) {
+void KAV_A3XX_FCU_LCD::handleMobiFlightRaw(char *cmds) {
 
   if (!_initialised)
     return;
@@ -65,28 +65,28 @@ void Open_A3XX_FCU_LCD::handleMobiFlightRaw(char *cmds) {
   }
 }
 
-void Open_A3XX_FCU_LCD::refreshLCD(uint8_t address) {
+void KAV_A3XX_FCU_LCD::refreshLCD(uint8_t address) {
   ht.write(address*2, buffer[address], 8);
 }
-void Open_A3XX_FCU_LCD::clearLCD() {
+void KAV_A3XX_FCU_LCD::clearLCD() {
   for (uint8_t i = 0; i < ht.MAX_ADDR; i++)
       ht.write(i, 0);
   memset(buffer, 0, BUFFER_SIZE_MAX);
 }
 
 //Speed
-void Open_A3XX_FCU_LCD::setSpeedLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setSpeedLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 7, enabled);
   refreshLCD(SPECIALS);
 }
 
-void Open_A3XX_FCU_LCD::setMachLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setMachLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 6, enabled);
   SET_BUFF_BIT(SPD_TEN, 0, enabled); // Decimal-point
   refreshLCD(SPECIALS);
 }
 
-void Open_A3XX_FCU_LCD::setSpeedDot(int8_t state) {
+void KAV_A3XX_FCU_LCD::setSpeedDot(int8_t state) {
   bool enabled;
   if (state == 0) enabled = false;
   else enabled = true;
@@ -94,7 +94,7 @@ void Open_A3XX_FCU_LCD::setSpeedDot(int8_t state) {
   refreshLCD(HDG_HUN);
 }
 
-void Open_A3XX_FCU_LCD::showSpeedValue(uint16_t value) {
+void KAV_A3XX_FCU_LCD::showSpeedValue(uint16_t value) {
   if (value > 999) value = 999;
   displayDigit(SPD_UNIT, (value % 10));
   value = value / 10;
@@ -103,23 +103,23 @@ void Open_A3XX_FCU_LCD::showSpeedValue(uint16_t value) {
 }
 
 //Heading
-void Open_A3XX_FCU_LCD::setHeadingLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setHeadingLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 5, enabled);
   SET_BUFF_BIT(ALT_TEN, 0, enabled);
   refreshLCD(SPECIALS);
   refreshLCD(ALT_TEN);
 }
-void Open_A3XX_FCU_LCD::setTrackLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setTrackLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 4, enabled);
   SET_BUFF_BIT(ALT_HUN, 0, enabled);
   refreshLCD(SPECIALS);
   refreshLCD(ALT_HUN);
 }
-void Open_A3XX_FCU_LCD::setLatitudeLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setLatitudeLabel(bool enabled) {
   SET_BUFF_BIT(HDG_TEN, 0, enabled);
   refreshLCD(HDG_TEN);
 }
-void Open_A3XX_FCU_LCD::setHeadingDot(int8_t state) {
+void KAV_A3XX_FCU_LCD::setHeadingDot(int8_t state) {
   bool enabled;
   if (state == 0) enabled = false;
   else enabled = true;
@@ -127,7 +127,7 @@ void Open_A3XX_FCU_LCD::setHeadingDot(int8_t state) {
   refreshLCD(HDG_UNIT);
 }
 
-void Open_A3XX_FCU_LCD::showHeadingValue(uint16_t value) {
+void KAV_A3XX_FCU_LCD::showHeadingValue(uint16_t value) {
   if (value > 999) value = 999;
   displayDigit(HDG_UNIT, (value % 10));
   value = value / 10;
@@ -136,22 +136,22 @@ void Open_A3XX_FCU_LCD::showHeadingValue(uint16_t value) {
 }
 
 // Altitude
-void Open_A3XX_FCU_LCD::setAltitudeLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setAltitudeLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 0, enabled);
   refreshLCD(SPECIALS);
 }
-void Open_A3XX_FCU_LCD::setLvlChLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setLvlChLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 1, enabled);
   refreshLCD(SPECIALS);
 }
-void Open_A3XX_FCU_LCD::setAltitudeDot(int8_t state) {
+void KAV_A3XX_FCU_LCD::setAltitudeDot(int8_t state) {
   bool enabled;
   if (state == 0) enabled = false;
   else enabled = true;
   SET_BUFF_BIT(VRT_THO, 0, enabled);
   refreshLCD(VRT_THO);
 }
-void Open_A3XX_FCU_LCD::showAltitudeValue(uint32_t value) {
+void KAV_A3XX_FCU_LCD::showAltitudeValue(uint32_t value) {
   if (value > 99999) value = 99999;
   displayDigit(ALT_UNIT, (value % 10));
   value = value / 10;
@@ -164,22 +164,22 @@ void Open_A3XX_FCU_LCD::showAltitudeValue(uint32_t value) {
 }
 
 //Vertical
-void Open_A3XX_FCU_LCD::setVrtSpdLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setVrtSpdLabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 2, enabled);
   SET_BUFF_BIT(ALT_THO, 0, enabled);
   refreshLCD(SPECIALS);
   refreshLCD(ALT_THO);
 }
-void Open_A3XX_FCU_LCD::setFPALabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setFPALabel(bool enabled) {
   SET_BUFF_BIT(SPECIALS, 3, enabled);
   SET_BUFF_BIT(ALT_TTH, 0, enabled);
   refreshLCD(SPECIALS);
   refreshLCD(ALT_TTH);
 }
-void Open_A3XX_FCU_LCD::setSignLabel(bool enabled) {
+void KAV_A3XX_FCU_LCD::setSignLabel(bool enabled) {
   vertSignEnabled = enabled;
 }
-void Open_A3XX_FCU_LCD::showVerticalValue(int16_t value) {
+void KAV_A3XX_FCU_LCD::showVerticalValue(int16_t value) {
   if (value > 9999) value = 9999;
   if (value < -9999) value = -9999; 
   if (value < 0) {
@@ -204,7 +204,7 @@ void Open_A3XX_FCU_LCD::showVerticalValue(int16_t value) {
   displayDigit(VRT_HUN, (value % 10));
   displayDigit(VRT_THO, (value / 10));
 }
-void Open_A3XX_FCU_LCD::showFPAValue(int8_t value) {
+void KAV_A3XX_FCU_LCD::showFPAValue(int8_t value) {
   if (value > 99) value = 99;
   if (value < -99) value = -99; 
   if (value < 0) {
@@ -227,7 +227,7 @@ void Open_A3XX_FCU_LCD::showFPAValue(int8_t value) {
 }
 
 // Preset States
-void Open_A3XX_FCU_LCD::setSpeedDashes(int8_t state) {
+void KAV_A3XX_FCU_LCD::setSpeedDashes(int8_t state) {
   uint8_t val;
   bool enabled;
   if (state == 0) enabled = false;
@@ -244,7 +244,7 @@ void Open_A3XX_FCU_LCD::setSpeedDashes(int8_t state) {
   refreshLCD(SPECIALS);    
 }
 
-void Open_A3XX_FCU_LCD::setHeadingDashes(int8_t state) {
+void KAV_A3XX_FCU_LCD::setHeadingDashes(int8_t state) {
   uint8_t val;
   bool enabled;
   if (state == 0) enabled = false;
@@ -258,7 +258,7 @@ void Open_A3XX_FCU_LCD::setHeadingDashes(int8_t state) {
   displayDigit(HDG_TEN, val);
   displayDigit(HDG_UNIT, val);
 }
-void Open_A3XX_FCU_LCD::setAltitudeDashes(int8_t state) {
+void KAV_A3XX_FCU_LCD::setAltitudeDashes(int8_t state) {
   uint8_t val;
   bool enabled;
   if (state == 0) enabled = false;
@@ -274,7 +274,7 @@ void Open_A3XX_FCU_LCD::setAltitudeDashes(int8_t state) {
   displayDigit(ALT_TEN, val);
   displayDigit(ALT_UNIT, val);
 }
-void Open_A3XX_FCU_LCD::setVrtSpdDashes(int8_t state) {
+void KAV_A3XX_FCU_LCD::setVrtSpdDashes(int8_t state) {
   uint8_t val;
   bool enabled;
   if (state == 0) enabled = false;
@@ -292,35 +292,35 @@ void Open_A3XX_FCU_LCD::setVrtSpdDashes(int8_t state) {
   displayDigit(VRT_TEN, val);
   displayDigit(VRT_UNIT, val);
 }
-void Open_A3XX_FCU_LCD::setStartLabels() {
+void KAV_A3XX_FCU_LCD::setStartLabels() {
   setAltitudeLabel(true);
   setLvlChLabel(true);
   setLatitudeLabel(true);
 }
-void Open_A3XX_FCU_LCD::toggleTrkHdgMode(int8_t state) {
+void KAV_A3XX_FCU_LCD::toggleTrkHdgMode(int8_t state) {
   if (state == 0) setHeadingMode();
   else setTrackMode();
 }
-void Open_A3XX_FCU_LCD::setHeadingMode() {
+void KAV_A3XX_FCU_LCD::setHeadingMode() {
   setHeadingLabel(true);
   setTrackLabel(false);
   setVrtSpdLabel(true);
   setFPALabel(false);
   trkActive = false;
 }
-void Open_A3XX_FCU_LCD::setTrackMode() {
+void KAV_A3XX_FCU_LCD::setTrackMode() {
   setHeadingLabel(false);
   setTrackLabel(true);
   setVrtSpdLabel(false);
   setFPALabel(true);
   trkActive = true;
 }
-void Open_A3XX_FCU_LCD::setSpeedMode(uint16_t value) {
+void KAV_A3XX_FCU_LCD::setSpeedMode(uint16_t value) {
   setSpeedLabel(true);
   setMachLabel(false);
   showSpeedValue(value);
 }
-void Open_A3XX_FCU_LCD::setMachMode(uint16_t value) {
+void KAV_A3XX_FCU_LCD::setMachMode(uint16_t value) {
   setSpeedLabel(false);
   setMachLabel(true);
   showSpeedValue(value);
@@ -342,7 +342,7 @@ uint8_t digitPatternFCU[13] = {
   0b00000000, // blank
   0b11001100, // small 0 (For V/S)
 };
-void Open_A3XX_FCU_LCD::displayDigit(uint8_t address, uint8_t digit) {
+void KAV_A3XX_FCU_LCD::displayDigit(uint8_t address, uint8_t digit) {
   // This ensures that anything over 12 is turned to 'blank', and as it's unsigned, anything less than 0 will become 255, and therefore, 'blank'.
   if (digit > 12) digit = 11;
 
@@ -351,7 +351,7 @@ void Open_A3XX_FCU_LCD::displayDigit(uint8_t address, uint8_t digit) {
   refreshLCD(address);
 }
 
-void Open_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
+void KAV_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
   // handle single command
   // does it contain = if so split into cmd & data, if not set cmd to string, and data to 0
   char *p = strchr(cmd, '=');
@@ -380,9 +380,5 @@ void Open_A3XX_FCU_LCD::handleMobiFlightCmd(char *cmd) {
   else if (strcmp(cmd, "setSpdDot")==0) setSpeedDot((int8_t)data);
   else if (strcmp(cmd, "setHdgDot")==0) setHeadingDot((int8_t)data);
   else if (strcmp(cmd, "setAltDot")==0) setAltitudeDot((int8_t)data);
-  else if (strcmp(cmd, "toggleTrkHdg")==0) toggleTrkHdgMode((int8_t)data);
-
-  // FBW LVars Site
-  // https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#speed
-  
+  else if (strcmp(cmd, "toggleTrkHdg")==0) toggleTrkHdgMode((int8_t)data);  
 }

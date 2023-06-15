@@ -1,11 +1,11 @@
 /**
- * Open A3XX EFIS LCD
+ * KAV A3XX EFIS LCD
  * Written by: James Kavanagh & Keith Greenwood
- * This library has been written to drive the 'OpenA3XX' EFIS LCD Display.
+ * This library has been written to drive the 'Kav Simulations' EFIS LCD Display.
  */
 
-#ifndef _Open_A3XX_EFIS_LCD_h
-#define _Open_A3XX_EFIS_LCD_h
+#ifndef _KAV_A3XX_EFIS_LCD_h
+#define _KAV_A3XX_EFIS_LCD_h
 
 #define BUFFER_SIZE_MAX 16
 
@@ -16,7 +16,7 @@
 #endif
 #include "HT1621.h"
 
-class Open_A3XX_EFIS_LCD {
+class KAV_A3XX_EFIS_LCD {
 private:
   // Fields
   HT1621 ht_efis;
@@ -29,13 +29,12 @@ private:
   // Methods
   void handleMobiFlightCmd(char *string);
   void displayDigit(uint8_t address, uint8_t digit);
-  //void setBufferBit(uint8_t address, uint8_t bit, uint8_t enabled);
   void refreshLCD(uint8_t address);
   
 public:
   // Constructor
   // 'CLK' is sometimes referred to as 'RW'
-  Open_A3XX_EFIS_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht_efis(CS, CLK, DATA) { };
+  KAV_A3XX_EFIS_LCD(uint8_t CS, uint8_t CLK, uint8_t DATA) : ht_efis(CS, CLK, DATA) { };
 
   void begin();
   void clearLCD();
@@ -57,4 +56,4 @@ public:
   void showQNHValue(uint16_t value);
 };
 
-#endif //Open_A3XX_EFIS_LCD_h
+#endif //KAV_A3XX_EFIS_LCD_h
