@@ -35,7 +35,7 @@
     "CanInstallFirmware": true,
     "CanResetBoard": true,
     "DelayAfterFirmwareUpdate": 0,
-    "FirmwareBaseName": "mobiflight_mega",
+    "FirmwareBaseName": "mobiflight_mega_kav",
     "FirmwareExtension": "hex",
     "LatestFirmwareVersion": "2.4.1",
     "FriendlyName": "Arduino Mega 2560",
