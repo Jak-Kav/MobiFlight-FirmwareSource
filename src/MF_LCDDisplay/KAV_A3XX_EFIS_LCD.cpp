@@ -101,6 +101,14 @@ void KAV_A3XX_EFIS_LCD::showStd(uint16_t state)
 void KAV_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
 {
     if (value > 9999) value = 9999;
+    if (value < 2000) {
+        // If value is less than 2000, then it's hPa, so no decimal point.
+        setDot(false);
+    } else {
+        // If value is greater than 2000, then it's inHg, so decimal point.
+        setDot(true);
+    }
+
     displayDigit(DIGIT_FOUR, (value % 10));
     value = value / 10;
     displayDigit(DIGIT_THREE, (value % 10));
@@ -108,7 +116,6 @@ void KAV_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
     displayDigit(DIGIT_TWO, (value % 10));
     displayDigit(DIGIT_ONE, (value / 10));
     
-    setDot(false);
     setQFE(false);
     setQNH(true);
 }
@@ -116,6 +123,14 @@ void KAV_A3XX_EFIS_LCD::showQNHValue(uint16_t value)
 void KAV_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
 {
     if (value > 9999) value = 9999;
+    if (value < 2000) {
+        // If value is less than 2000, then it's hPa, so no decimal point.
+        setDot(false);
+    } else {
+        // If value is greater than 2000, then it's inHg, so decimal point.
+        setDot(true);
+    }
+
     displayDigit(DIGIT_FOUR, (value % 10));
     value = value / 10;
     displayDigit(DIGIT_THREE, (value % 10));
@@ -123,7 +138,6 @@ void KAV_A3XX_EFIS_LCD::showQFEValue(uint16_t value)
     displayDigit(DIGIT_TWO, (value % 10));
     displayDigit(DIGIT_ONE, (value / 10));
     
-    setDot(true);
     setQFE(true);
     setQNH(false);
 }
