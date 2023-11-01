@@ -34,6 +34,9 @@
 #if MF_DIGIN_MUX_SUPPORT == 1
 #include "DigInMux.h"
 #endif
+#if MF_CUSTOMDEVICE_SUPPORT == 1
+#include "CustomDevice.h"
+#endif
 
 CmdMessenger  cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;
@@ -83,6 +86,10 @@ void attachCommandCallbacks()
 
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
     cmdMessenger.attach(kSetShiftRegisterPins, OutputShifter::OnSet);
+#endif
+
+#if MF_CUSTOMDEVICE_SUPPORT == 1
+    cmdMessenger.attach(kSetCustomDevice, CustomDevice::OnSet);
 #endif
 
 #ifdef DEBUG2CMDMESSENGER

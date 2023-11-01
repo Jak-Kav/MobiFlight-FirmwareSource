@@ -6,3 +6,4 @@
 .vscode/arduino.json
 .DS_Store
 .gitignore
+.CustomDevices
